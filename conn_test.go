@@ -2,17 +2,16 @@ package sql2kv
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
 )
 
 func TestMySQL(t *testing.T) {
 
 	conf := MySQLConfig{
-		Username: "",
-		Password: "",
-		Schema:   "",
-		Host:     "",
+		Username: "root",
+		Password: "test",
+		Schema:   "test",
+		Host:     "localhost",
 		Port:     "3306",
 		Params:   "",
 		Trust:    "",
@@ -37,7 +36,7 @@ func TestMySQL(t *testing.T) {
 
 		// Probably need to model this explicitly
 		type InfoSchema struct {
-			Name string `db:"table_name"`
+			Name string `db:"TABLE_NAME"`
 		}
 
 		cols, err := rows.Columns()
@@ -47,15 +46,11 @@ func TestMySQL(t *testing.T) {
 		}
 		var is InfoSchema
 		_ = is
-		m := make(map[string]interface{})
-		if rows.MapScan(m); err != nil {
+		if rows.StructScan(&is); err != nil {
 			t.Error(err)
 		}
 		fmt.Println(cols)
-		//fmt.Println(is)
-		fmt.Println(m)
-		t := reflect.TypeOf(m["table_name"])
-		fmt.Println(t.String())
+		fmt.Println(is)
 	}
 
 }

@@ -33,20 +33,24 @@ type LevelDBConfig struct {
 
 func NewMySQLConn(conf MySQLConfig) (*sqlx.DB, error) {
 
-	tlsConf, err := newTLSClientConfig(conf.Trust, conf.Cert, conf.Key)
-	if err != nil {
-		return nil, err
+	if conf.Trust != "" {
+
+		tlsConf, err := newTLSClientConfig(conf.Trust, conf.Cert, conf.Key)
+		if err != nil {
+			return nil, err
+		}
+
+		mysql.RegisterTLSConfig("custom", tlsConf)
 	}
 
-	mysql.RegisterTLSConfig("custom", tlsConf)
-
 	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/%s?tls=custom&parseTime=true&collation=utf8_unicode_ci",
+		"%s:%s@tcp(%s:%s)/%s?%s",
 		conf.Username,
 		conf.Password,
 		conf.Host,
 		conf.Port,
 		conf.Schema,
+		conf.Params,
 	)
 	return sqlx.Open("mysql", dsn)
 }
