@@ -10,7 +10,10 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+var testMysqlDb *sqlx.DB
+
 func TestMain(m *testing.M) {
+
 	err := setup()
 	if err != nil {
 		fmt.Println(err)
@@ -22,6 +25,7 @@ func TestMain(m *testing.M) {
 
 func setup() error {
 	log.Println("Running setup")
+	var err error
 
 	conf := MySQLConfig{
 		Username: "root",
@@ -33,17 +37,17 @@ func setup() error {
 		Trust:    "",
 	}
 
-	db, err := NewMySQLConn(conf)
+	testMysqlDb, err = NewMySQLConn(conf)
 	if err != nil {
 		return err
 	}
 
-	err = dropTables(db)
+	err = dropTables(testMysqlDb)
 	if err != nil {
 		return err
 	}
 
-	err = setupUserTable(db)
+	err = setupUserTable(testMysqlDb)
 	if err != nil {
 		return err
 	}
