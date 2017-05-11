@@ -53,7 +53,12 @@ func setup() error {
 }
 
 func dropTables(db *sqlx.DB) error {
-	_, err := db.Exec("DROP TABLE users;")
+	_, err := db.Exec("DROP TABLE IF EXISTS users;")
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("DROP TABLE IF EXISTS address;")
 	if err != nil {
 		return err
 	}
