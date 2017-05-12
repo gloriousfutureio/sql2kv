@@ -18,7 +18,7 @@ func TestGetTableSchemas(t *testing.T) {
 		},
 	}
 
-	results, err := GetTableSchemas(testMysqlDb, "test", []string{"users", "address"})
+	results, err := GetTableSchemas(testMysqlDb, "test", []string{"users", "addresses"})
 	if err != nil {
 		t.Errorf("Get Table Schema Failed due to %v", err)
 	}

@@ -56,6 +56,8 @@ func GetTableSchemas(db *sqlx.DB, schema string, tables []string) ([]TableSchema
 				return nil, err
 			}
 
+			// Current way to check if a column is a primary key
+			// might need to add more or totally refactor this stuff
 			if c.ColumnKey == "PRI" {
 				tableSchema.PrimaryKey = c.ColumnName
 			}
