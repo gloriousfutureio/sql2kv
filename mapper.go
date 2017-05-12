@@ -35,29 +35,35 @@ func GetTableSchemas(db *sqlx.DB, schema string, tables []string) ([]TableSchema
 		IS_NULLABLE,
 		COLUMN_KEY
 		FROM information_schema.columns
-		WHERE TABLE_NAME='%s';`, t)
+		WHERE TABLE_NAME='%s'
+		AND TABLE_SCHEMA='%s'`, t, schema)
 
 		tableSchema := TableSchema{t, nil, ""}
 
 		rows, err := db.Queryx(q)
 		if err != nil {
 			return nil, err
+		}
 
-			for rows.Next() {
-				var c ColumnSchema
+		// iterate over the rows
+		for rows.Next() {
 
-				if rows.StructScan(&c); err != nil {
-					if c.ColumnKey == "PRI" {
-						tableSchema.PrimaryKey = c.ColumnKey
-					}
+			var c ColumnSchema
 
-					tableSchema.Columns = append(tableSchema.Columns, c)
-				}
+			err = rows.StructScan(&c)
+
+			if err != nil {
+				return nil, err
 			}
+
+			if c.ColumnKey == "PRI" {
+				tableSchema.PrimaryKey = c.ColumnName
+			}
+
+			tableSchema.Columns = append(tableSchema.Columns, c)
 		}
 
 		results = append(results, tableSchema)
-
 	}
 
 	return results, nil

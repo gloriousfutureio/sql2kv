@@ -1,7 +1,6 @@
 package sql2kv
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -62,39 +61,6 @@ func TestMySQL(t *testing.T) {
 		if rows.StructScan(&is); err != nil {
 			t.Error(err)
 		}
-		fmt.Println(is)
 	}
 
 }
-
-/*
- untyped madness
-
-
-	for rows.Next() {
-
-		cols, err := rows.Columns()
-		if err != nil {
-			t.Error(err)
-			t.FailNow()
-		}
-		data := make([]interface{}, len(cols))
-		pointers := make([]interface{}, len(cols))
-		for i := 0; i < len(cols); i++ {
-			pointers[i] = &data[i]
-		}
-		if rows.Scan(pointers...); err != nil {
-			t.Error(err)
-		}
-		fmt.Println(data)
-		fmt.Println(cols)
-		for _, item := range data {
-			if item == nil {
-				fmt.Printf("%s ", "got nil")
-				continue
-			}
-			t := reflect.TypeOf(item)
-			fmt.Printf("%s ", t.String()) }
-		fmt.Println("")
-	}
-*/

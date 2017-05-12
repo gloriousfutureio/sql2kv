@@ -1,20 +1,18 @@
 package sql2kv
 
 import (
+	"reflect"
 	"testing"
 )
 
 func TestGetTableSchemas(t *testing.T) {
 
-	tc := []struct {
-		T TableSchema
-	}{
-		TableSchema{
-			"users",
+	ts := []TableSchema{
+		TableSchema{"users",
 			[]ColumnSchema{
-				{"test", "users", "age", "int", "", ""},
-				{"test", "users", "id", "int", "", "PRI"},
-				{"test", "users", "name", "text", "", ""},
+				{"test", "users", "id", "int", "NO", "PRI"},
+				{"test", "users", "name", "text", "YES", ""},
+				{"test", "users", "age", "int", "YES", ""},
 			},
 			"id",
 		},
@@ -28,6 +26,14 @@ func TestGetTableSchemas(t *testing.T) {
 	if len(results) != 2 {
 		t.Errorf("Expected %v got %v", 2, len(results))
 		t.FailNow()
+	}
+
+	for i, _ := range ts {
+		if !reflect.DeepEqual(ts[i], results[i]) {
+			t.Errorf("\n Expected: %v \n, Acutal: %v \n", ts[i], results[i])
+			t.FailNow()
+
+		}
 	}
 
 }
