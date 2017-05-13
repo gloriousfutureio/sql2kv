@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"testing"
 
@@ -44,14 +43,12 @@ func setup() error {
 		return err
 	}
 
-	log.Println("Running setup")
-
 	conf := MySQLConfig{
 		Username: "root",
 		Password: "test",
 		Schema:   "test",
 		Host:     "localhost",
-		Port:     "3306",
+		Port:     "3316",
 		Params:   "",
 		Trust:    "",
 	}

@@ -1,0 +1,27 @@
+machine:
+    environment:
+        GOPATH: "/home/ubuntu/.go_workspace"
+        IMPORT_PATH: "github.com/gloriousfutureio/sql2kv"
+    pre:
+        - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
+    services:
+        - docker
+
+
+dependencies:
+    pre:
+        - sudo pip install docker-compose==1.8.1
+        - go get -u github.com/jteeuwen/go-bindata/...
+        - go get -u github.com/golang/dep/cmd/dep
+    override:
+        - mkdir -p $GOPATH/src/$IMPORT_PATH
+        - rm -rf $GOPATH/src/$IMPORT_PATH  
+        - cp -rf ~/sql2kv $GOPATH/src/$IMPORT_PATH
+        - cd $GOPATH/src/$IMPORT_PATH && dep ensure
+        - cd $GOPATH/src/$IMPORT_PATH && docker-compose pull mysql
+        - cd $GOPATH/src/$IMPORT_PATH && docker-compose up -d
+
+test:
+    override:
+        - cd $GOPATH/src/$IMPORT_PATH && go test `go list ./... | grep -v vendor`
+
