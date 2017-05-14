@@ -30,6 +30,28 @@ type TableSchema struct {
 	PrimaryKey string
 }
 
+// GetScanner returns a a container that can be scanner
+// for the various data types this table contains
+func (ts TableSchema) GetScanner() []interface{} {
+
+	var scanner []interface{}
+	for _, t := range ts.Columns {
+		switch t.DataType {
+		case "text":
+			var d string
+			scanner = append(scanner, &d)
+		case "int":
+			var d int
+			scanner = append(scanner, &d)
+		default:
+			log.Fatal("bad data type")
+		}
+	}
+
+	return scanner
+
+}
+
 // ColumnNames returns a slice of column names. The ordering of this slice
 // affects the SQL statement yielded by QueryAll.
 func (ts TableSchema) ColumnNames() []string {
@@ -114,21 +136,7 @@ func QueryTable(db *sqlx.DB, ts TableSchema) ([]map[string]interface{}, error) {
 
 	for rows.Next() {
 
-		var newRow []interface{}
-
-		//
-		for _, t := range ts.Columns {
-			switch t.DataType {
-			case "text":
-				var d string
-				newRow = append(newRow, &d)
-			case "int":
-				var d int
-				newRow = append(newRow, &d)
-			default:
-				log.Fatal("bad data type")
-			}
-		}
+		newRow := ts.GetScanner()
 
 		err = rows.Scan(newRow...)
 
@@ -143,10 +151,14 @@ func QueryTable(db *sqlx.DB, ts TableSchema) ([]map[string]interface{}, error) {
 			default:
 				log.Println("unhandled type")
 			}
+
+			// check to see if there is a priarmy on this key
 			if ts.ColumnNames()[i] == ts.PrimaryKey {
 				// If this column is the PK; assign it again to a special key in our map
 				m["__pk"] = fmt.Sprintf("%v", m[ts.ColumnNames()[i]])
 			}
+
+			//m = setPrimaryKey(m, ts.PrimaryKey)
 
 		}
 
@@ -159,9 +171,9 @@ func QueryTable(db *sqlx.DB, ts TableSchema) ([]map[string]interface{}, error) {
 }
 
 // WriteKV writes data to levelDB.
-func WriteKV(ldb *leveldb.DB, schema, table, pk, sep string, data map[string]interface{}) error {
+func WriteKV(ldb *leveldb.DB, ts TableSchema, data map[string]interface{}, sep string) error {
 
-	key := []byte(strings.Join([]string{schema, table, pk}, sep))
+	key := []byte(strings.Join([]string{ts.Schema, ts.Name, data["__pk"].(string)}, sep))
 
 	value, err := json.Marshal(data)
 	if err != nil {
