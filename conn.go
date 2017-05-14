@@ -52,6 +52,7 @@ func NewMySQLConn(conf MySQLConfig) (*sqlx.DB, error) {
 		conf.Schema,
 		conf.Params,
 	)
+
 	return sqlx.Open("mysql", dsn)
 }
 

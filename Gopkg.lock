@@ -1,0 +1,25 @@
+memo = "c7fcd02a7cf9c3d5849f27d210d83c234dd3116d9032afa3c583f9fa84018013"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/go-sql-driver/mysql"
+  packages = ["."]
+  revision = "2e00b5cd70399450106cec6431c2e2ce3cae5034"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/golang/snappy"
+  packages = ["."]
+  revision = "7db9049039a047d955fe8c19b83c8ff5abd765c7"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/jmoiron/sqlx"
+  packages = [".","reflectx"]
+  revision = "f980a91bdc37abef88269b8f122d7de6352102f5"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/syndtr/goleveldb"
+  packages = ["leveldb","leveldb/cache","leveldb/comparer","leveldb/errors","leveldb/filter","leveldb/iterator","leveldb/journal","leveldb/memdb","leveldb/opt","leveldb/storage","leveldb/table","leveldb/util"]
+  revision = "8c81ea47d4c41a385645e133e15510fc6a2a74b4"

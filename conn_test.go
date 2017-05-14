@@ -6,21 +6,7 @@ import (
 
 func TestMySQL(t *testing.T) {
 
-	conf := MySQLConfig{
-		Username: "root",
-		Password: "test",
-		Schema:   "test",
-		Host:     "localhost",
-		Port:     "3306",
-		Params:   "",
-		Trust:    "",
-	}
-
-	db, err := NewMySQLConn(conf)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
+	db := testMySQLDB
 
 	// Get lots of stuff from information_schema
 	_ = `select table_name from information_schema.columns limit 5`
