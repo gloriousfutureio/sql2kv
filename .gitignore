@@ -1,2 +1,6 @@
+# Docker volumes
 data/mysql
 data/postgres
+
+# Vendored code
+vendor

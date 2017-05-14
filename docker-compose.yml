@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 services:
   mysql: 
     image: mysql:8.0
@@ -10,4 +10,4 @@ services:
     volumes:
       - ./data/mysql:/var/lib/mysql
     ports:
-      - 3306:3306
+      - 3316:3306
