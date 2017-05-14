@@ -20,6 +20,7 @@ dependencies:
         - cd $GOPATH/src/$IMPORT_PATH && dep ensure
         - cd $GOPATH/src/$IMPORT_PATH && docker-compose pull mysql
         - cd $GOPATH/src/$IMPORT_PATH && docker-compose up -d
+        - sleep 3
 
 test:
     override:
