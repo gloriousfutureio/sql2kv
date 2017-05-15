@@ -9,26 +9,45 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/syndtr/goleveldb/leveldb"
+	"gopkg.in/yaml.v2"
 )
 
-// Config holds our config.
-type MySQLConfig struct {
-	// MySQL config
-	Username         string `yaml:"username"`
-	Password         string `yaml:"password"`
-	Schema           string `yaml:"schema"`
-	Host             string `yaml:"host"`
-	Port             string `yaml:"port"`
-	Params           string `yaml:"conn_params"`
-	Trust, Cert, Key string
+// Config is our top-level app configuration.
+type Config struct {
+	MySQL   MySQLConfig   `yaml:"mysql"`
+	LevelDB LevelDBConfig `yaml:"leveldb"`
+}
 
-	LevelDBConfig
+// NewConfig reads a config file from disk and returns a Config.
+func NewConfig(path string) (Config, error) {
+	var c Config
+	data, err := ioutil.ReadFile(path)
+	if err != nil {
+		return c, err
+	}
+	if err := yaml.Unmarshal(data, &c); err != nil {
+		return c, err
+	}
+	return c, nil
+}
+
+// MySQLConfig holds our MySQL config.
+type MySQLConfig struct {
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+	Schema   string `yaml:"schema"`
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
+	Params   string `yaml:"conn_params"`
+	Trust    string `yaml:"trust"`
+	Cert     string `yaml:"cert"`
+	Key      string `yaml:"key"`
 }
 
 // LevelDBConfig ...
 type LevelDBConfig struct {
-	Path      string `yaml:"leveldb_path"`
-	SizeLimit string `yaml:"leveldb_size_limit"`
+	Path      string `yaml:"path"`
+	SizeLimit string `yaml:"size_limit"`
 }
 
 func NewMySQLConn(conf MySQLConfig) (*sqlx.DB, error) {
