@@ -30,14 +30,14 @@ type TableSchema struct {
 	PrimaryKey string
 }
 
-// GetScanner returns a a container that can be scanner
+// GetScannable returns a a container that can be scanner
 // for the various data types this table contains
-func (ts TableSchema) GetScanner() []interface{} {
+func (ts TableSchema) GetScannable() []interface{} {
 
 	var scanner []interface{}
 	for _, t := range ts.Columns {
 		switch t.DataType {
-		case "text":
+		case "text", "varchar":
 			var d string
 			scanner = append(scanner, &d)
 		case "int":
@@ -136,7 +136,7 @@ func QueryTable(db *sqlx.DB, ts TableSchema) ([]map[string]interface{}, error) {
 
 	for rows.Next() {
 
-		newRow := ts.GetScanner()
+		newRow := ts.GetScannable()
 
 		err = rows.Scan(newRow...)
 

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"testing"
 
@@ -25,6 +26,7 @@ func TestMain(m *testing.M) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
 	code := m.Run()
 	os.Exit(code)
 }
@@ -42,6 +44,8 @@ func setup() error {
 	if testLevelDB, err = leveldb.OpenFile(dir, &opts); err != nil {
 		return err
 	}
+
+	log.Println("Running setup")
 
 	conf := MySQLConfig{
 		Username: "root",
@@ -101,7 +105,8 @@ func setupUserTable(db *sqlx.DB) error {
 	schema := `CREATE TABLE users (
 	id integer auto_increment primary key,
     name text,
-    age integer NULL
+    age integer NULL,
+	hint varchar(10) NULL
     );`
 
 	_, err := db.Exec(schema)
@@ -109,65 +114,78 @@ func setupUserTable(db *sqlx.DB) error {
 		return err
 	}
 
+	insertStatement := "INSERT INTO users (name, age, hint) VALUES (?, ?, ?)"
+
 	users := []struct {
 		query string
 		name  string
 		age   int
+		hint  string
 	}{
 		{
-			"INSERT INTO users (name, age) VALUES (?, ?)",
+			insertStatement,
 			"Farhan",
 			32,
+			"hi",
 		},
 		{
-			"INSERT INTO users (name, age) VALUES (?, ?)",
+			insertStatement,
 			"Coleman",
 			32,
+			"hi",
 		},
 		{
-			"INSERT INTO users (name, age) VALUES (?, ?)",
+			insertStatement,
 			"Jeff May",
 			27,
+			"hi",
 		},
 		{
-			"INSERT INTO users (name, age) VALUES (?, ?)",
+			insertStatement,
 			"Mr&MissGophie",
 			1,
+			"hi",
 		},
 		{
-			"INSERT INTO users (name, age) VALUES (?, ?)",
+			insertStatement,
 			"Dogs",
 			200,
+			"hi",
 		},
 		{
-			"INSERT INTO users (name, age) VALUES (?, ?)",
+			insertStatement,
 			"GopherThing",
 			20,
+			"hi",
 		},
 		{
-			"INSERT INTO users (name, age) VALUES (?, ?)",
+			insertStatement,
 			"Linus Torval",
 			100,
+			"hi",
 		},
 		{
-			"INSERT INTO users (name, age) VALUES (?, ?)",
+			insertStatement,
 			"Rob Pike",
 			100,
+			"hi",
 		},
 		{
-			"INSERT INTO users (name, age) VALUES (?, ?)",
+			insertStatement,
 			"NinjaMan",
 			23232,
+			"hi",
 		},
 		{
-			"INSERT INTO users (name, age) VALUES (?, ?)",
+			insertStatement,
 			"Zack",
 			34,
+			"hi",
 		},
 	}
 
 	for _, s := range users {
-		_, err := db.Exec(s.query, s.name, s.age)
+		_, err := db.Exec(s.query, s.name, s.age, s.hint)
 		if err != nil {
 			return err
 		}
