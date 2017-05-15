@@ -106,7 +106,8 @@ func setupUserTable(db *sqlx.DB) error {
 	id integer auto_increment primary key,
     name text,
     age integer NULL,
-	hint varchar(10) NULL
+	hint varchar(10) NULL,
+	alive boolean
     );`
 
 	_, err := db.Exec(schema)
@@ -114,78 +115,89 @@ func setupUserTable(db *sqlx.DB) error {
 		return err
 	}
 
-	insertStatement := "INSERT INTO users (name, age, hint) VALUES (?, ?, ?)"
+	insertStatement := "INSERT INTO users (name, age, hint, alive) VALUES (?, ?, ?, ?)"
 
 	users := []struct {
 		query string
 		name  string
 		age   int
 		hint  string
+		alive bool
 	}{
 		{
 			insertStatement,
 			"Farhan",
 			32,
 			"hi",
+			true,
 		},
 		{
 			insertStatement,
 			"Coleman",
 			32,
 			"hi",
+			false,
 		},
 		{
 			insertStatement,
 			"Jeff May",
 			27,
 			"hi",
+			true,
 		},
 		{
 			insertStatement,
 			"Mr&MissGophie",
 			1,
 			"hi",
+			false,
 		},
 		{
 			insertStatement,
 			"Dogs",
 			200,
 			"hi",
+			true,
 		},
 		{
 			insertStatement,
 			"GopherThing",
 			20,
 			"hi",
+			false,
 		},
 		{
 			insertStatement,
 			"Linus Torval",
 			100,
 			"hi",
+			true,
 		},
 		{
 			insertStatement,
 			"Rob Pike",
 			100,
 			"hi",
+			false,
 		},
 		{
 			insertStatement,
 			"NinjaMan",
 			23232,
 			"hi",
+			true,
 		},
 		{
 			insertStatement,
 			"Zack",
 			34,
 			"hi",
+			false,
 		},
 	}
 
 	for _, s := range users {
-		_, err := db.Exec(s.query, s.name, s.age, s.hint)
+		_, err := db.Exec(s.query, s.name, s.age, s.hint, s.alive)
 		if err != nil {
 			return err
 		}

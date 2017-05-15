@@ -43,6 +43,9 @@ func (ts TableSchema) GetScannable() []interface{} {
 		case "int":
 			var d int
 			scanner = append(scanner, &d)
+		case "tinyint": // this is the boolean case
+			var d bool
+			scanner = append(scanner, &d)
 		default:
 			log.Fatal("bad data type")
 		}
@@ -148,6 +151,8 @@ func QueryTable(db *sqlx.DB, ts TableSchema) ([]map[string]interface{}, error) {
 				m[ts.ColumnNames()[i]] = reflect.ValueOf(item).Elem().Int()
 			case *string:
 				m[ts.ColumnNames()[i]] = reflect.ValueOf(item).Elem().String()
+			case *bool:
+				m[ts.ColumnNames()[i]] = reflect.ValueOf(item).Elem().Bool()
 			default:
 				log.Println("unhandled type")
 			}
