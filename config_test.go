@@ -22,7 +22,6 @@ func TestNewConfig(t *testing.T) {
 		},
 	}
 
-	_ = expected
 	conf, err := NewConfig("testfixtures/test-config.yml")
 	if err != nil {
 		t.Errorf("could not load config: %v", err)
