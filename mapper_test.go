@@ -6,15 +6,17 @@ import (
 	"testing"
 )
 
-var TableSchemaFixture = TableSchema{
+// UsersTableSchemaFixture models our "test.users" table.
+var UsersTableSchemaFixture = TableSchema{
 	"test",
 	"users",
-	UserColumnSchemaFixture,
+	UsersColumnSchemaFixture,
 	"id",
 }
 
-// UserFixture for tests
-var UserColumnSchemaFixture = []ColumnSchema{
+// UsersColumnSchemaFixture models a subset of INFORMATION_SCHEMA.COLUMNS for
+// our "test.users" table.
+var UsersColumnSchemaFixture = []ColumnSchema{
 	{"test", "users", "id", "int", "NO", "PRI", 1},
 	{"test", "users", "name", "text", "YES", "", 2},
 	{"test", "users", "age", "int", "YES", "", 3},
@@ -22,8 +24,10 @@ var UserColumnSchemaFixture = []ColumnSchema{
 	{"test", "users", "alive", "tinyint", "YES", "", 5},
 }
 
-// UserJsonFixture for tests
-var UserJsonFixture = []map[string]interface{}{
+// UserJSONSchema models the JSON serializable types for our "test.users" table.
+// We expect these results to be written and read as []byte to and from a local
+// kv store.
+var UserJSONSchema = []map[string]interface{}{
 	{
 		"name":  "Farhan",
 		"age":   int64(32),
@@ -116,7 +120,7 @@ func TestGetTableSchema(t *testing.T) {
 		{
 			"Testing Basic User Schema",
 			"users",
-			&TableSchemaFixture,
+			&UsersTableSchemaFixture,
 		},
 	}
 
@@ -140,11 +144,11 @@ func TestQueryTableAndWriteKV(t *testing.T) {
 	var ts = TableSchema{
 		"test",
 		"users",
-		UserColumnSchemaFixture,
+		UsersColumnSchemaFixture,
 		"id",
 	}
 
-	var expectRows = UserJsonFixture
+	var expectRows = UserJSONSchema
 
 	rows, err := QueryTable(testMySQLDB, ts)
 	if err != nil {
@@ -171,7 +175,7 @@ func TestWriteKV(t *testing.T) {
 		out map[string]interface{}
 	}{
 		{
-			UserJsonFixture[0],
+			UserJSONSchema[0],
 			"test!users!1",
 			map[string]interface{}{
 				"id":    float64(1),
@@ -183,7 +187,7 @@ func TestWriteKV(t *testing.T) {
 			},
 		},
 		{
-			UserJsonFixture[1],
+			UserJSONSchema[1],
 			"test!users!2",
 			map[string]interface{}{
 				"id":    float64(2),
@@ -196,7 +200,7 @@ func TestWriteKV(t *testing.T) {
 			},
 		},
 		{
-			UserJsonFixture[2],
+			UserJSONSchema[2],
 			"test!users!3",
 			map[string]interface{}{
 				"id":    float64(3),
@@ -208,7 +212,7 @@ func TestWriteKV(t *testing.T) {
 			},
 		},
 		{
-			UserJsonFixture[3],
+			UserJSONSchema[3],
 			"test!users!4",
 			map[string]interface{}{
 				"id":    float64(4),
@@ -220,7 +224,7 @@ func TestWriteKV(t *testing.T) {
 			},
 		},
 		{
-			UserJsonFixture[4],
+			UserJSONSchema[4],
 			"test!users!5",
 			map[string]interface{}{
 				"id":    float64(5),
@@ -232,7 +236,7 @@ func TestWriteKV(t *testing.T) {
 			},
 		},
 		{
-			UserJsonFixture[5],
+			UserJSONSchema[5],
 			"test!users!6",
 			map[string]interface{}{
 				"id":    float64(6),
@@ -244,7 +248,7 @@ func TestWriteKV(t *testing.T) {
 			},
 		},
 		{
-			UserJsonFixture[6],
+			UserJSONSchema[6],
 			"test!users!7",
 			map[string]interface{}{
 				"id":    float64(7),
@@ -256,7 +260,7 @@ func TestWriteKV(t *testing.T) {
 			},
 		},
 		{
-			UserJsonFixture[7],
+			UserJSONSchema[7],
 			"test!users!8",
 			map[string]interface{}{
 				"id":    float64(8),
@@ -268,7 +272,7 @@ func TestWriteKV(t *testing.T) {
 			},
 		},
 		{
-			UserJsonFixture[8],
+			UserJSONSchema[8],
 			"test!users!9",
 			map[string]interface{}{
 				"id":    float64(9),
@@ -280,7 +284,7 @@ func TestWriteKV(t *testing.T) {
 			},
 		},
 		{
-			UserJsonFixture[9],
+			UserJSONSchema[9],
 			"test!users!10",
 			map[string]interface{}{
 				"id":    float64(10),
@@ -294,7 +298,7 @@ func TestWriteKV(t *testing.T) {
 	}
 
 	for _, c := range ts {
-		err := WriteKV(testLevelDB, TableSchemaFixture, c.in, "!")
+		err := WriteKV(testLevelDB, UsersTableSchemaFixture, c.in, "!")
 		if err != nil {
 			t.Errorf("error from WriteKV: %v", err)
 		}
