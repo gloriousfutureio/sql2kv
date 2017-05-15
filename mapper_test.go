@@ -114,7 +114,6 @@ func TestGetTableSchema(t *testing.T) {
 		out  *TableSchema
 	}{
 		{
-
 			"Testing Basic User Schema",
 			"users",
 			&TableSchemaFixture,

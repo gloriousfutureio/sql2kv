@@ -361,7 +361,7 @@ func setupAddressTable(db *sqlx.DB) error {
 	}
 
 	if c != 10 {
-		return errors.New("Missing correct number of rows")
+		return errors.New("expected exactly 10 rows")
 	}
 
 	return nil
