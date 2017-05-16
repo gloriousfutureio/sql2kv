@@ -1,4 +1,4 @@
-memo = "c7fcd02a7cf9c3d5849f27d210d83c234dd3116d9032afa3c583f9fa84018013"
+memo = "20ca3730e23275936a4be0f50939150ce2a9bc0f11457f89bc50731d74571f6e"
 
 [[projects]]
   branch = "master"
@@ -23,3 +23,15 @@ memo = "c7fcd02a7cf9c3d5849f27d210d83c234dd3116d9032afa3c583f9fa84018013"
   name = "github.com/syndtr/goleveldb"
   packages = ["leveldb","leveldb/cache","leveldb/comparer","leveldb/errors","leveldb/filter","leveldb/iterator","leveldb/journal","leveldb/memdb","leveldb/opt","leveldb/storage","leveldb/table","leveldb/util"]
   revision = "8c81ea47d4c41a385645e133e15510fc6a2a74b4"
+
+[[projects]]
+  name = "github.com/urfave/cli"
+  packages = ["."]
+  revision = "0bdeddeeb0f650497d603c4ad7b20cfe685682f6"
+  version = "v1.19.1"
+
+[[projects]]
+  branch = "v2"
+  name = "gopkg.in/yaml.v2"
+  packages = ["."]
+  revision = "cd8b52f8269e0feb286dfeef29f8fe4d5b397e0b"

@@ -1,0 +1,13 @@
+mysql:
+  username: "root"
+  password: "test"
+  schema: "test"
+  host: "localhost"
+  port: "3316"
+  conn_params: ""
+  trust: ""
+  cert: ""
+  key: "foo"
+leveldb:
+  path: "changeme"
+  size_limit: "100"
