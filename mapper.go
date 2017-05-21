@@ -37,6 +37,9 @@ func (ts TableSchema) GetScannable() []interface{} {
 	var scanner []interface{}
 	for _, t := range ts.Columns {
 		switch t.DataType {
+		case "binary":
+			var d []byte
+			scanner = append(scanner, &d)
 		case "text", "varchar":
 			var d string
 			scanner = append(scanner, &d)
@@ -153,6 +156,8 @@ func QueryTable(db *sqlx.DB, ts TableSchema) ([]map[string]interface{}, error) {
 				m[ts.ColumnNames()[i]] = reflect.ValueOf(item).Elem().String()
 			case *bool:
 				m[ts.ColumnNames()[i]] = reflect.ValueOf(item).Elem().Bool()
+			case *[]byte:
+				m[ts.ColumnNames()[i]] = reflect.ValueOf(item).Elem().Bytes()
 			default:
 				log.Println("unhandled type")
 			}
