@@ -152,25 +152,23 @@ func TestGetTableSchema(t *testing.T) {
 
 func TestQueryTableAndWriteKV(t *testing.T) {
 
-	var ts = TableSchema{
-		"test",
-		"users",
-		UsersColumnSchemaFixture,
-		"id",
-	}
-
 	var expectRows = UserJSONSchema
 
-	rows, err := QueryTable(testMySQLDB, ts)
+	rows, err := QueryTable(testMySQLDB, UsersTableSchemaFixture)
 	if err != nil {
 		t.Errorf("error from QueryTable %v", err)
 	}
 
-	for i, r := range rows {
+	for i, row := range rows {
+		if row["__pk"] != expectRows[i]["__pk"] {
+			t.Errorf("\n Expected %v \n Acutal %v", expectRows[i], row)
+			t.FailNow()
+		}
+	}
 
-		if r["__pk"] != expectRows[i]["__pk"] {
-
-			t.Errorf("\n Expected %v \n Acutal %v", expectRows[i], r)
+	for i, row := range rows {
+		if err := WriteKV(testLevelDB, UsersTableSchemaFixture, row, "!"); err != nil {
+			t.Errorf("error writing row %v to KV: %v", i, err)
 			t.FailNow()
 		}
 
