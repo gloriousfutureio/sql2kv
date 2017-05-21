@@ -1,12 +1,15 @@
 package sql2kv
 
 import (
+	"crypto/rand"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"testing"
+
+	"encoding/base64"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/syndtr/goleveldb/leveldb"
@@ -15,8 +18,9 @@ import (
 
 // Globals
 var (
-	testMySQLDB *sqlx.DB
-	testLevelDB *leveldb.DB
+	testMySQLDB     *sqlx.DB
+	testLevelDB     *leveldb.DB
+	commonKeyBase64 = base64.StdEncoding.EncodeToString([]byte("commonkey"))
 )
 
 func TestMain(m *testing.M) {
@@ -100,6 +104,13 @@ func dropTables(db *sqlx.DB) error {
 
 }
 
+func newKey() []byte {
+	k := make([]byte, 32)
+	rand.Read(k)
+	return k
+
+}
+
 func setupUserTable(db *sqlx.DB) error {
 
 	schema := `CREATE TABLE users (
@@ -107,7 +118,8 @@ func setupUserTable(db *sqlx.DB) error {
     name text,
     age integer NULL,
 	hint varchar(10) NULL,
-	alive boolean
+	alive boolean,
+	user_key binary(32) NULL
     );`
 
 	_, err := db.Exec(schema)
@@ -115,7 +127,7 @@ func setupUserTable(db *sqlx.DB) error {
 		return err
 	}
 
-	insertStatement := "INSERT INTO users (name, age, hint, alive) VALUES (?, ?, ?, ?)"
+	insertStatement := "INSERT INTO users (name, age, hint, alive, user_key) VALUES (?, ?, ?, ?, ?)"
 
 	users := []struct {
 		query string
@@ -123,6 +135,7 @@ func setupUserTable(db *sqlx.DB) error {
 		age   int
 		hint  string
 		alive bool
+		key   []byte
 	}{
 		{
 			insertStatement,
@@ -130,6 +143,7 @@ func setupUserTable(db *sqlx.DB) error {
 			32,
 			"hi",
 			true,
+			[]byte("commonkey"),
 		},
 		{
 			insertStatement,
@@ -137,6 +151,7 @@ func setupUserTable(db *sqlx.DB) error {
 			32,
 			"hi",
 			false,
+			[]byte("commonkey"),
 		},
 		{
 			insertStatement,
@@ -144,6 +159,7 @@ func setupUserTable(db *sqlx.DB) error {
 			27,
 			"hi",
 			true,
+			[]byte("commonkey"),
 		},
 		{
 			insertStatement,
@@ -151,6 +167,7 @@ func setupUserTable(db *sqlx.DB) error {
 			1,
 			"hi",
 			false,
+			[]byte("commonkey"),
 		},
 		{
 			insertStatement,
@@ -158,6 +175,7 @@ func setupUserTable(db *sqlx.DB) error {
 			200,
 			"hi",
 			true,
+			[]byte("commonkey"),
 		},
 		{
 			insertStatement,
@@ -165,13 +183,15 @@ func setupUserTable(db *sqlx.DB) error {
 			20,
 			"hi",
 			false,
+			[]byte("commonkey"),
 		},
 		{
 			insertStatement,
-			"Linus Torval",
+			"Linux Torvaldz",
 			100,
 			"hi",
 			true,
+			[]byte("commonkey"),
 		},
 		{
 			insertStatement,
@@ -179,6 +199,7 @@ func setupUserTable(db *sqlx.DB) error {
 			100,
 			"hi",
 			false,
+			[]byte("commonkey"),
 		},
 		{
 			insertStatement,
@@ -186,6 +207,7 @@ func setupUserTable(db *sqlx.DB) error {
 			23232,
 			"hi",
 			true,
+			[]byte("commonkey"),
 		},
 		{
 			insertStatement,
@@ -193,11 +215,12 @@ func setupUserTable(db *sqlx.DB) error {
 			34,
 			"hi",
 			false,
+			[]byte("commonkey"),
 		},
 	}
 
 	for _, s := range users {
-		_, err := db.Exec(s.query, s.name, s.age, s.hint, s.alive)
+		_, err := db.Exec(s.query, s.name, s.age, s.hint, s.alive, s.key)
 		if err != nil {
 			return err
 		}
